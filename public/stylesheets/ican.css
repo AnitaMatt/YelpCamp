@@ -1,0 +1,89 @@
+
+/* .testrow {
+    height: 450px;
+    
+
+} */
+
+@keyframes speed {
+    0% {
+        color: gold;
+        left: -900px;
+        top: 0px;
+    }
+
+    50% {
+        color: brown;
+        left: -620px;
+        top: 70px;
+        font-size: 60px;
+    }
+
+    80% {
+        color: bisque;
+        left: 10px;
+        top: 90px;
+        ;
+        font-size: 40px;
+    }
+
+    90% {
+        color: goldenrod;
+        left: 3px;
+        top: 90px;
+    }
+
+    100% {
+        color: black;
+        top: 30px;
+        font-size: 40px;
+    }
+}
+
+.run {
+    animation-name: speed;
+    animation-duration: 4s;
+    position: relative;
+    animation-fill-mode: forwards;
+    /* box-sizing: border-box; */
+}
+
+
+@media screen and (min-width: 780px) {
+    @keyframes speed {
+        0% {
+            color: gold;
+            left: -900px;
+            top: 0px;
+        }
+
+        50% {
+            color: brown;
+            left: -620px;
+            top: 70px;
+            font-size: 100px;
+        }
+
+        80% {
+            color: bisque;
+            left: 10px;
+            top: 90px;
+            font-size: 60px;
+        }
+
+        90% {
+            color: goldenrod;
+            left: 3px;
+            top: 90px;
+        }
+
+        100% {
+            color: black;
+            /* top: 70px; */
+            font-size: 60px;
+        }
+    }
+    .seeme{
+        display: unset;
+    }
+}
