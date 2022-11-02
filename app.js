@@ -15,8 +15,8 @@ const campgroundRoutes = require('./routes/campground');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users')
 
-// mongoose.connect('mongodb://localhost:27017/yelp-camp');
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb://localhost:27017/yelp-camp');
+// mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -42,7 +42,8 @@ const sessionConfig = {
         httpOnly: true,
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7,
-    }
+    },
+
 }
 app.use(session(sessionConfig));
 app.use(flash())
@@ -57,18 +58,20 @@ passport.deserializeUser(User.deserializeUser());
 
 //flash setup ******************
 app.use((req, res, next) => {
+    res.locals.currentUser = req.user
     res.locals.success = req.flash('success');
     res.locals.edit = req.flash('edit');
     res.locals.error = req.flash('error');
+    req.session.returnTo = req.originalUrl
     next();
 })
 
 //Using routers
-app.get('/fakeUser',async (req, res)=>{
-    const user = new User({email: "ada@gmail.com", username:"coltp"})
-   const newuser = await User.register(user, "chick")
-   res.send(newuser)
-    
+app.get('/fakeUser', async (req, res) => {
+    const user = new User({ email: "ada@gmail.com", username: "coltp" })
+    const newuser = await User.register(user, "chick")
+    res.send(newuser)
+
 })
 app.use('/', userRoutes)
 app.use('/campgrounds', campgroundRoutes);
