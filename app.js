@@ -15,8 +15,8 @@ const campgroundRoutes = require('./routes/campground');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users')
 
-mongoose.connect('mongodb://localhost:27017/yelp-camp');
-// mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+// mongoose.connect('mongodb://localhost:27017/yelp-camp');
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -62,7 +62,6 @@ app.use((req, res, next) => {
     res.locals.success = req.flash('success');
     res.locals.edit = req.flash('edit');
     res.locals.error = req.flash('error');
-    req.session.returnTo = req.originalUrl
     next();
 })
 

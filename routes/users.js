@@ -4,8 +4,13 @@ const User = require("../models/user");
 const catchAsync = require("../utilities/catchAsync");
 const passport = require('passport')
 
-
-
+//redirecting a user to the right place once they login
+const returnTo = (req, res, next) => {
+    if (req.session.returnTo) {
+        res.locals.returnTo = req.session.returnTo;
+    }
+    next()
+}
 
 
 router.get('/register', (req, res) => {
@@ -35,13 +40,10 @@ router.get('/login', (req, res) => {
     res.render('users/login')
 })
 
-router.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), function (req, res) {
-    
-    // console.log(req)
-    // delete req.session.returnTo
-    req.flash('success', "welcome back ")
-    const redirectUrl = req.session.returnTo || '/campgrounds'
-    console.log(req.session)
+router.post('/login', returnTo, passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), function (req, res) {
+
+    req.flash('success', "Welcome back ")
+    const redirectUrl = res.locals.returnTo || '/campgrounds'
     res.redirect(redirectUrl);
 })
 
