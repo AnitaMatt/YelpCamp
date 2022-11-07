@@ -30,6 +30,9 @@ router.post('/register', catchAsync(async (req, res, next) => {
         })
 
     } catch (e) {
+        if (e.keyPattern && e.keyPattern.email){
+            e.message = "Email already exists"
+        }
         req.flash('error', e.message)
         res.redirect('/register')
     }
