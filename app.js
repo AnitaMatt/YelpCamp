@@ -4,6 +4,7 @@ if (process.env.NODE_ENV !== "production") {
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
+const mongoSanitize = require('express-mongo-sanitize');
 const ejsMate = require('ejs-mate');
 const methodOverride = require("method-override");
 const ExpressError = require("./utilities/ExpressError");
@@ -12,13 +13,14 @@ const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
+const helmet = require("helmet");
 
 //IMPORTING ROUTERS
 const campgroundRoutes = require('./routes/campground');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users')
 
-// mongoose.connect('mongodb://localhost:27017/yelp-camp');
+//mongoose.connect('mongodb://localhost:27017/yelp-camp');
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 const db = mongoose.connection;
@@ -36,8 +38,15 @@ app.set("views", path.join(__dirname, "views"))
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(mongoSanitize());
+app.use(
+    helmet({
+      contentSecurityPolicy: false,
+    })
+  );
 
 const sessionConfig = {
+    name:'mapped',
     secret: 'secretforme',
     resave: false,
     saveUninitialized: true,
