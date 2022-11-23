@@ -106,6 +106,8 @@ app.use((err, req, res, next) => {
     if (!err.message) err.message = "SOMETHING WENT WRONG"
     res.status(statusCode).render("error", { err })
 })
-app.listen(8080, () => {
-    console.log("Serving on port 8080")
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Serving on port ${port}`)
 })
