@@ -8,20 +8,27 @@ const mongoSanitize = require('express-mongo-sanitize');
 const ejsMate = require('ejs-mate');
 const methodOverride = require("method-override");
 const ExpressError = require("./utilities/ExpressError");
-const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
-const helmet = require("helmet");
+const session = require('express-session');
+const MongoStore = require("connect-mongo")
+// const helmet = require("helmet");
 
 //IMPORTING ROUTERS
 const campgroundRoutes = require('./routes/campground');
 const reviewRoutes = require('./routes/reviews');
-const userRoutes = require('./routes/users')
+const userRoutes = require('./routes/users');
+const dbUrl = process.env.MONGO_URI || 'mongodb://localhost:27017/yelp-camp';
 
-//mongoose.connect('mongodb://localhost:27017/yelp-camp');
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+const secret = process.env.SECRET || 'secretforme'
+
+mongoose.connect(dbUrl,
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -39,15 +46,20 @@ app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(mongoSanitize());
-app.use(
-    helmet({
-      contentSecurityPolicy: false,
-    })
-  );
 
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    secret,
+    touchAfter: 24 * 3600
+})
+
+store.on("error", function (e) {
+    console.log("SESSION STORE ERROR", e)
+})
 const sessionConfig = {
-    name:'mapped',
-    secret: 'secretforme',
+    store,
+    name: 'mapped',
+    secret: secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -59,7 +71,6 @@ const sessionConfig = {
 }
 app.use(session(sessionConfig));
 app.use(flash())
-
 
 app.use(passport.initialize())
 app.use(passport.session())
